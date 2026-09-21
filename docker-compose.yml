@@ -12,6 +12,7 @@ services:
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.driver.OracleDriver
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
       SPRING_AI_GOOGLE_GENAI_API_KEY: ${GEN_KEY}
+      SPRING_MAIL_HOST: smtp.naver.com
 
       sist_url: ${sist_url}
       sist_username: ${sist_username}
