@@ -2,12 +2,12 @@ server:
   port: 8080
   servlet:
     context-path: /
-spring:
-  config:
-    import: 
-      - classpath:db.properties
-      - classpath:postgres.properties
-      - classpath:Ai.properties
+    spring:
+      config:
+        import:
+          - optional:classpath:db.properties
+          - optional:classpath:postgres.properties
+          - optional:classpath:Ai.properties
   datasource:
     oracle:
       jdbc-url: ${sist_url}
