@@ -10,6 +10,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${sist_username}
       SPRING_DATASOURCE_PASSWORD: ${sist_password}
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.driver.OracleDriver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
 
       sist_url: ${sist_url}
       sist_username: ${sist_username}
