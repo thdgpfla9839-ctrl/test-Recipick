@@ -11,6 +11,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${sist_password}
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.driver.OracleDriver
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.ai.model.google.genai.autoconfigure.chat.GoogleGenAiChatAutoConfiguration
 
       sist_url: ${sist_url}
       sist_username: ${sist_username}
