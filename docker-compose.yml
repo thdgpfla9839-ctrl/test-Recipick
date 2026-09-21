@@ -6,6 +6,9 @@ services:
     environment:
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATASOURCE_URL: ${sist_url}
+      SPRING_DATASOURCE_USERNAME: ${sist_username}
+      SPRING_DATASOURCE_PASSWORD: ${sist_password}
 
       sist_url: ${sist_url}
       sist_username: ${sist_username}
