@@ -9,7 +9,6 @@ services:
     container_name: recipick-redis
     restart: always
 
-    # 도커 내부 네트워크에서만 접근 (외부 노출 X)
     expose:
       - "6379"
 
@@ -22,10 +21,15 @@ services:
   # =====================================================
   app:
 
-    build: .
+    # Docker Hub 이미지
+    image: thdgpfla5659/recipick:latest
+
+    # 컨테이너 자동 재시작
     restart: always
 
+    # Spring Boot 환경변수
     environment:
+
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
 
       sist_url: ${sist_url}
@@ -44,17 +48,15 @@ services:
       mail_username: ${mail_username}
       mail_password: ${mail_password}
 
-    # Redis도 같은 네트워크에서 서비스 이름(redis)으로 접근
-    depends_on:
-      - redis
-
-    # 외부에 직접 노출하지 않음 (nginx가 대신 연결)
+    # 외부에 포트를 직접 공개하지 않음
     expose:
       - "8080"
 
-    # Health Check
+    # Spring Boot Health Check
     healthcheck:
+
       test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/8080"]
+
       interval: 10s
       timeout: 5s
       retries: 5
