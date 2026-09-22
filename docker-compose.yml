@@ -1,18 +1,32 @@
 services:
-  app:
-    build: .
-    container_name: recipick-app
+
+  # =====================================================
+  # Redis
+  # =====================================================
+  redis:
+
+    image: redis:7-alpine
+    container_name: recipick-redis
     restart: always
+
+    # 도커 내부 네트워크에서만 접근 (외부 노출 X)
+    expose:
+      - "6379"
+
+    volumes:
+      - redis-data:/data
+
+
+  # =====================================================
+  # Spring Boot Application
+  # =====================================================
+  app:
+
+    build: .
+    restart: always
+
     environment:
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      SPRING_DATASOURCE_URL: ${sist_url}
-      SPRING_DATASOURCE_USERNAME: ${sist_username}
-      SPRING_DATASOURCE_PASSWORD: ${sist_password}
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.driver.OracleDriver
-      SPRING_JPA_HIBERNATE_DDL_AUTO: none
-      SPRING_AI_GOOGLE_GENAI_API_KEY: ${GEN_KEY}
-      SPRING_MAIL_HOST: smtp.naver.com
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
 
       sist_url: ${sist_url}
       sist_username: ${sist_username}
@@ -22,36 +36,50 @@ services:
       post_username: ${post_username}
       post_password: ${post_password}
 
-      jwt_secret: ${jwt_secret}
       GEN_KEY: ${GEN_KEY}
       IMG_KEY: ${IMG_KEY}
       social_key: ${social_key}
+      jwt_secret: ${jwt_secret}
+
       mail_username: ${mail_username}
       mail_password: ${mail_password}
-    expose:
-      - "8080"
+
+    # Redis도 같은 네트워크에서 서비스 이름(redis)으로 접근
     depends_on:
       - redis
 
-  redis:
-    image: redis:7-alpine
-    container_name: recipick-redis
+    # 외부에 직접 노출하지 않음 (nginx가 대신 연결)
     expose:
-      - "6379"
-    volumes:
-      - redis-data:/data
-    restart: unless-stopped
+      - "8080"
 
+    # Health Check
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+
+  # =====================================================
+  # Nginx
+  # =====================================================
   nginx:
+
     image: nginx:latest
     container_name: nginx
     restart: always
+
     ports:
       - "80:80"
+
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
     depends_on:
-      - app
+      app:
+        condition: service_healthy
+
 
 volumes:
   redis-data:
